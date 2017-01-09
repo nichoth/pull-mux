@@ -1,6 +1,6 @@
 {
   "name": "pull-mux",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Namespace streams",
   "main": "index.js",
   "directories": {
