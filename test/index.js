@@ -1,6 +1,7 @@
 var test = require('tape')
 var S = require('pull-stream')
 var mux = require('../')
+var SS = require('../pipe')
 
 test('create a namespaced stream from an object', function (t) {
     t.plan(2)
@@ -49,4 +50,27 @@ test('pass in a mux function', function (t) {
             ], 'should map the events with the function')
         })
     )
+})
+
+test('demuxed pipe', function (t) {
+    t.plan(4)
+    var demuxed = {
+        a: S.values([1,2]),
+        b: S.values([3,4]),
+    }
+    var sink = {
+        a: S.collect(function (err, res) {
+            t.error(err)
+            t.deepEqual(res, [1,2], 'should pipe by key')
+        }),
+        b: S.collect(function (err, res) {
+            t.error(err)
+            t.deepEqual(res, [3,4], 'should pipe by key')
+        })
+    }
+    SS( demuxed, sink )
+})
+
+test('invalid dx streams', function (t) {
+    // should throw if the keys don't match
 })
