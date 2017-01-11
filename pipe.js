@@ -18,13 +18,16 @@ function pipe (demuxedStreams) {
         return acc
     }, {})
 
-    keys.forEach(function (k) {
+    var newDxStream = keys.reduce(function (acc, k) {
         var _source = source[k]
-        if (!sinksByKey[k].length) {
-            throw new Error('Event ' + k + ' not handled')
+        var lastSink = sinksByKey[k][sinksByKey[k].length - 1]
+        if (!lastSink) {
+            throw new Error('Stream ' + k + ' does not have a sink')
         }
-        S.apply(null, [_source].concat(sinksByKey[k]))
-    })
+        acc[k] = S.apply(null, [_source].concat(sinksByKey[k]))
+        return acc
+    }, {})
+    return newDxStream
 }
 
 module.exports = pipe
