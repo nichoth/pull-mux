@@ -1,6 +1,7 @@
 var S = require('pull-stream/pull')
 var map = require('pull-stream/throughs/map')
 var many = require('pull-many')
+var Event = require('./event')
 
 // take a hash of streams and return a namespaced stream
 function muxObj (streams, muxer) {
@@ -35,10 +36,6 @@ function muxObj (streams, muxer) {
 
     var namespacedStreams = namespace(streams)
     return many(namespacedStreams)
-}
-
-function Event (type, data) {
-    return [type, data]
 }
 
 module.exports = muxObj
