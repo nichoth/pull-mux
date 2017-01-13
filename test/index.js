@@ -73,6 +73,28 @@ test('nested object', function (t) {
     )
 })
 
+test('mux streams that have children', function (t) {
+    t.plan(2)
+    var b = S.values([2])
+    b.c = S.values([3])
+    var dx = {
+        a: S.values([1]),
+        b: b
+    }
+    var muxed = mux(dx)
+    S(
+        muxed,
+        S.collect(function (err, res) {
+            t.error(err)
+            t.deepEqual(res, [
+                ['a', 1],
+                ['b', 2],
+                ['b', ['c', 3]]
+            ], 'should mux functions with keys')
+        })
+    )
+})
+
 test('demuxed pipe', function (t) {
     t.plan(4)
     var demuxed = {
