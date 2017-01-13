@@ -52,6 +52,27 @@ test('pass in a mux function', function (t) {
     )
 })
 
+test('nested object', function (t) {
+    t.plan(2)
+    var dx = {
+        a: S.values([1]),
+        b: {
+            c: S.values([2])
+        }
+    }
+    var muxed = mux(dx)
+    S(
+        muxed,
+        S.collect(function (err, res) {
+            t.error(err)
+            t.deepEqual(res, [
+                ['a', 1],
+                ['b', ['c', 2]]
+            ], 'should mux nested object')
+        })
+    )
+})
+
 test('demuxed pipe', function (t) {
     t.plan(4)
     var demuxed = {

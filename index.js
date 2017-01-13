@@ -5,17 +5,36 @@ var many = require('pull-many')
 // take a hash of streams and return a namespaced stream
 function muxObj (streams, muxer) {
     var _muxer = muxer || Event
-    var names = Object.keys(streams)
-    var namespacedStreams = names.map(function (n) {
-        return S(
-            streams[n],
-            map(function (ev) {
-                return _muxer(n, ev)
-            })
-        )
-    })
-    var muxedStream = many(namespacedStreams)
-    return muxedStream
+
+    // return array of streams
+    function namespace (streams) {
+        var names = Object.keys(streams)
+        return names.reduce(function (acc, n) {
+            var stream = streams[n]
+            var childKeys = Object.keys(stream)
+            if (childKeys.length) {
+                acc.push(S(
+                    muxObj(stream, _muxer),
+                    map(function (ev) {
+                        return Event(n, ev)
+                    })
+                ))
+            }
+
+            if (typeof stream === 'function') {
+                acc = acc.concat(S(
+                    stream,
+                    map(function (ev) {
+                        return _muxer(n, ev)
+                    })
+                ))
+            }
+            return acc
+        }, [])
+    }
+
+    var namespacedStreams = namespace(streams)
+    return many(namespacedStreams)
 }
 
 function Event (type, data) {
