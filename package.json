@@ -9,7 +9,7 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags && npm publish",
-    "test": "node test/index.js | tap-spec"
+    "test": "tape test/*.js | tap-spec"
   },
   "dependencies": {
     "pull-many": "^1.0.8",

@@ -23,7 +23,7 @@ function createDemuxed (manifest) {
     if (Array.isArray(manifest)) {
         return manifest.map(function (node) {
             return filter(function (ev) {
-                return Event.type === node
+                return Event.type(ev) === node
             })
         })
     }
