@@ -1,11 +1,8 @@
-// var S = require('pull-stream/pull')
-var S = require('pull-stream')
-// var pushable = require('pull-pushable')
-var tee = require('pull-tee')
-var pair = require('pull-pair')
-// var Notify = require('pull-notify')
+var S = require('pull-stream/pull')
 var filter = require('pull-stream/throughs/filter')
 var map = require('pull-stream/throughs/map')
+var tee = require('pull-tee')
+var pair = require('pull-pair')
 var Event = require('./event')
 function noop () {}
 
@@ -17,10 +14,10 @@ function demux (source, keys) {
 
     var t = tee(pairs.map(function (p) {
         return S(
-            S.filter(function (ev) {
+            filter(function (ev) {
                 return Event.type(ev) === p.key
             }),
-            S.map(function (ev) {
+            map(function (ev) {
                 return Event.data(ev)
             }),
             p.sink
