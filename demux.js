@@ -1,37 +1,39 @@
-var S = require('pull-stream/pull')
-var filter = require('pull-stream/filter')
+// var S = require('pull-stream/pull')
+var S = require('pull-stream')
+// var pushable = require('pull-pushable')
+var tee = require('pull-tee')
+var pair = require('pull-pair')
+// var Notify = require('pull-notify')
+var filter = require('pull-stream/throughs/filter')
+var map = require('pull-stream/throughs/map')
 var Event = require('./event')
 function noop () {}
 
-function demux (stream, manifest) {
-    var cb = typeof manifest === 'function' ?
-        manifest :
-        noop
-    var hasCb = cb !== noop
-    if (!hasCb) return createDemuxed(manifest)
-    S(
-        stream,
-        S.take(1),
-        S.collect(function (err, res) {
-            if (err) return cb(err)
-            cb(null, createDemuxed(res[0]))
-        })
-    )
-}
+function demux (source, keys) {
+    var pairs = keys.map(function (k) {
+        var p = pair()
+        return { key: k, source: p.source, sink: p.sink }
+    })
 
-function createDemuxed (manifest) {
-    if (Array.isArray(manifest)) {
-        return manifest.map(function (node) {
-            return filter(function (ev) {
-                return Event.type(ev) === node
-            })
-        })
-    }
-    // is object
-    return Object.keys(manifest).reduce(function (acc, k) {
-        acc[k] = createDemuxed(manifest[k])
+    var t = tee(pairs.map(function (p) {
+        return S(
+            S.filter(function (ev) {
+                return Event.type(ev) === p.key
+            }),
+            S.map(function (ev) {
+                return Event.data(ev)
+            }),
+            p.sink
+        )
+    }))
+
+    var newSource = pairs.reduce(function (acc, p) {
+        acc[p.key] = p.source
         return acc
     }, {})
+
+    S(source, t, S.drain())
+    return newSource
 }
 
 module.exports = demux
