@@ -3,7 +3,6 @@ var createManifest = require('../manifest')
 
 test('create manifest', function (t) {
     t.plan(1)
-    // can't mix fns and objects at the same level
     var manifest = createManifest({
         a: {
             aa: function () {},
@@ -25,6 +24,6 @@ test('create manifest', function (t) {
         c: {
             d: ['e']
         }
-    }, 'should have the right structure')
+    }, 'should serialize the tree')
 })
 

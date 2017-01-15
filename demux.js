@@ -4,7 +4,6 @@ var map = require('pull-stream/throughs/map')
 var tee = require('pull-tee')
 var pair = require('pull-pair')
 var Event = require('./event')
-function noop () {}
 
 function demux (source, keys) {
     var pairs = keys.map(function (k) {
