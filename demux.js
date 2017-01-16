@@ -5,6 +5,7 @@ var tee = require('pull-tee')
 var pair = require('pull-pair')
 var Event = require('./event')
 
+// demux one level (not recursive)
 function demux (source, keys) {
     var pairs = keys.map(function (k) {
         var p = pair()

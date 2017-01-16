@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "pull-many": "^1.0.8",
-    "pull-notify": "^0.1.1",
     "pull-pair": "^1.1.0",
     "pull-stream": "^3.5.0",
     "pull-tee": "https://github.com/pull-stream/pull-tee/tarball/master"

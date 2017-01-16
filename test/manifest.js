@@ -4,12 +4,15 @@ var createManifest = require('../manifest')
 test('create manifest', function (t) {
     t.plan(1)
     var manifest = createManifest({
-        a: {
-            aa: function () {},
-            ab: function () {}
+        eatMoreVegetables: function () {},
+        foo: {
+            get: function () {},
+            update: function () {},
+            fetch: function () {}
         },
-        b: {
-            bb: function () {}
+        bar: {
+            edit: function () {},
+            goCrazy: function () {}
         },
         c: {
             d: {
@@ -18,12 +21,11 @@ test('create manifest', function (t) {
         }
     })
 
-    t.deepEqual(manifest, {
-        a: ['aa', 'ab'],
-        b: ['bb'],
-        c: {
-            d: ['e']
-        }
-    }, 'should serialize the tree')
+    t.deepEqual(manifest, [
+        'eatMoreVegetables',
+        ['foo', ['get', 'update', 'fetch']],
+        ['bar', ['edit', 'goCrazy']],
+        ['c', [['d', ['e']]]]
+    ], 'should serialize the tree')
 })
 
